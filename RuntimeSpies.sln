@@ -1,0 +1,25 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio 15
+VisualStudioVersion = 15.0.27703.2026
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "RuntimeSpies", "RuntimeSpies\RuntimeSpies.csproj", "{92F94136-4171-4610-A424-76DFE833EAAF}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{92F94136-4171-4610-A424-76DFE833EAAF}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{92F94136-4171-4610-A424-76DFE833EAAF}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{92F94136-4171-4610-A424-76DFE833EAAF}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{92F94136-4171-4610-A424-76DFE833EAAF}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {52D2F9A8-C686-4CD5-BA3D-07981064B4B5}
+	EndGlobalSection
+EndGlobal
