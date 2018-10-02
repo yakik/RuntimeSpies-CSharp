@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Diagnostics.Eventing.Reader;
 using System.Linq;
@@ -17,6 +18,9 @@ namespace RuntimeSpies
 
         public static VariableLiteral GetNewLiteral(object myObject)
         {
+            var a = myObject.GetType();
+            if (myObject is Array)
+                return new VariableLiteralArray(myObject);
             if (myObject is bool)
                 return new VariableLiteralBool(myObject);
             if (myObject is char)
@@ -25,15 +29,44 @@ namespace RuntimeSpies
                 return new VariableLiteralFloat(myObject);
             if (myObject is string)
                 return new VariableLiteralString(myObject);
+            if (myObject is IList && myObject.GetType().IsGenericType)
+                return new VariableLiteralList(myObject);
             if (myObject.GetType().IsClass)
                 return new VariableLiteralClass(myObject);
 
             return new VariableLiteralSimple(myObject);
         }
 
-        abstract public string GetDeclaration();
+        public abstract string GetDeclaration();
 
     }
+
+    internal class VariableLiteralList : VariableLiteral
+    {
+        internal VariableLiteralList(object myObject) : base(myObject)
+        {
+
+        }
+
+        public override string GetDeclaration()
+        {
+            var declaration = "new List<" + this.MyObject.GetType().GetGenericArguments().Single() + ">{";
+            var myCollection = (IEnumerable)this.MyObject;
+            var listItemIndex = 0;
+            foreach (var listItem in myCollection)
+            {
+
+                if (listItemIndex > 0)
+                    declaration += ",";
+                declaration += VariableLiteral.GetNewLiteral(listItem).GetDeclaration();
+
+                listItemIndex++;
+            }
+            declaration += "}";
+            return declaration;
+        }
+    }
+
     internal class VariableLiteralClass : VariableLiteral
     {
         internal VariableLiteralClass(object myObject) : base(myObject)
@@ -59,6 +92,34 @@ namespace RuntimeSpies
             return declaration;
         }
     }
+
+    internal class VariableLiteralArray : VariableLiteral
+    {
+        private Array MyArray { get; set; }
+
+        internal VariableLiteralArray(object myObject) : base(myObject)
+        {
+            this.MyArray = (Array) MyObject;
+        }
+
+        public override string GetDeclaration()
+        {
+            var declaration = "new " + this.MyArray.GetType().GetElementType() + "[] {";
+            var elementIndex = 0;
+            foreach (var element in this.MyArray)
+            {
+
+                if (elementIndex > 0)
+                    declaration += ",";
+                declaration += VariableLiteral.GetNewLiteral(element).GetDeclaration();
+
+                elementIndex++;
+            }
+            declaration += "}";
+            return declaration;
+        }
+    }
+
 
     internal class VariableLiteralString : VariableLiteral
     {
