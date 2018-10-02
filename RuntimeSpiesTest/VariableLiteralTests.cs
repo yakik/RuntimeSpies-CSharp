@@ -17,23 +17,33 @@ namespace RuntimeSpiesTest
 
             public int FieldA { get; set; }
             public String FieldB { get; set; }
+            public bool FieldC { get; set; }
+            public char FieldD { get; set; }
+            public long FieldE { get; set; }
+            public float FieldF { get; set; }
 
         }
-       
+
 
         [TestMethod]
-        public void ClassTest()
+        public void PrimitiveAndClassTests()
         {
             var a = new TestClass
             {
                 FieldA = 4,
-                FieldB = "Hello"
+                FieldB = "Hello\nHello",
+                FieldC = true,
+                FieldD = '\n',
+                FieldE = 123443435465,
+                FieldF = 123.453F
             };
             var myDeclaration = VariableLiteral.GetNewLiteral(a).GetDeclaration();
 
-            Assert.AreEqual(myDeclaration,
-                "new TestClass\n{\nFieldA = 4,\nFieldB = \"Hello\"\n}");
-           
+            Assert.AreEqual(
+                "new TestClass {FieldA = 4,FieldB = \"Hello\\nHello\",FieldC = true,FieldD = '\\n',FieldE = 123443435465,FieldF = 123.453F}",
+                myDeclaration);
+
         }
+
     }
 }
