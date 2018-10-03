@@ -37,7 +37,7 @@ namespace RuntimeSpies
             return new VariableLiteralSimple(myObject);
         }
 
-        public abstract string GetDeclaration();
+        public abstract string GetLiteral();
 
     }
 
@@ -48,7 +48,7 @@ namespace RuntimeSpies
 
         }
 
-        public override string GetDeclaration()
+        public override string GetLiteral()
         {
             var declaration = "new List<" + this.MyObject.GetType().GetGenericArguments().Single() + ">{";
             var myCollection = (IEnumerable)this.MyObject;
@@ -58,7 +58,7 @@ namespace RuntimeSpies
 
                 if (listItemIndex > 0)
                     declaration += ",";
-                declaration += VariableLiteral.GetNewLiteral(listItem).GetDeclaration();
+                declaration += VariableLiteral.GetNewLiteral(listItem).GetLiteral();
 
                 listItemIndex++;
             }
@@ -74,7 +74,7 @@ namespace RuntimeSpies
 
         }
 
-        public override string GetDeclaration()
+        public override string GetLiteral()
         {
             var declaration = "new " + this.MyObject.GetType().Name + " {";
             var propertyIndex = 0;
@@ -84,7 +84,7 @@ namespace RuntimeSpies
                 if (propertyIndex > 0)
                     declaration += ",";
                 declaration += property.Name + " = " +
-                               VariableLiteral.GetNewLiteral(property.GetValue(this.MyObject, null)).GetDeclaration();
+                               VariableLiteral.GetNewLiteral(property.GetValue(this.MyObject, null)).GetLiteral();
 
                 propertyIndex++;
             }
@@ -102,7 +102,7 @@ namespace RuntimeSpies
             this.MyArray = (Array) MyObject;
         }
 
-        public override string GetDeclaration()
+        public override string GetLiteral()
         {
             var declaration = "new " + this.MyArray.GetType().GetElementType() + "[] {";
             var elementIndex = 0;
@@ -111,7 +111,7 @@ namespace RuntimeSpies
 
                 if (elementIndex > 0)
                     declaration += ",";
-                declaration += VariableLiteral.GetNewLiteral(element).GetDeclaration();
+                declaration += VariableLiteral.GetNewLiteral(element).GetLiteral();
 
                 elementIndex++;
             }
@@ -130,7 +130,7 @@ namespace RuntimeSpies
             this.MyString = (string)this.MyObject;
         }
 
-        public override string GetDeclaration()
+        public override string GetLiteral()
         {
             var declaration = "\"" + this.MyString.Replace("\n", "\\n") + "\"";
 
@@ -147,7 +147,7 @@ namespace RuntimeSpies
 
         }
 
-        public override string GetDeclaration()
+        public override string GetLiteral()
         {
             string declaration;
             if ((char)this.MyObject == '\n')
@@ -169,7 +169,7 @@ namespace RuntimeSpies
 
         }
 
-        public override string GetDeclaration()
+        public override string GetLiteral()
         {
             var declaration = this.MyObject.ToString() + "F";
 
@@ -186,7 +186,7 @@ namespace RuntimeSpies
 
         }
 
-        public override string GetDeclaration()
+        public override string GetLiteral()
         {
             var declaration = this.MyObject.ToString();
 
@@ -203,7 +203,7 @@ namespace RuntimeSpies
 
         }
 
-        public override string GetDeclaration()
+        public override string GetLiteral()
         {
             if ((bool)this.MyObject)
                 return "true";

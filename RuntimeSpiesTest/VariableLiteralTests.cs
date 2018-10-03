@@ -39,7 +39,7 @@ namespace RuntimeSpiesTest
                 FieldE = 123443435465,
                 FieldF = 123.453F
             };
-            var myDeclaration = VariableLiteral.GetNewLiteral(a).GetDeclaration();
+            var myDeclaration = VariableLiteral.GetNewLiteral(a).GetLiteral();
 
             Assert.AreEqual("new TestClass {FieldA = 4,FieldB = \"Hello\\nHello\",FieldC = true,FieldD = '\\n',FieldE = 123443435465,FieldF = 123.453F}",
                 myDeclaration);
@@ -53,7 +53,7 @@ namespace RuntimeSpiesTest
 
             int[] myArray = {1, 2, 3, 4, 5};
 
-            var myDeclaration = VariableLiteral.GetNewLiteral(myArray).GetDeclaration();
+            var myDeclaration = VariableLiteral.GetNewLiteral(myArray).GetLiteral();
 
             Assert.AreEqual("new System.Int32[] {1,2,3,4,5}",
                 myDeclaration);
@@ -90,7 +90,7 @@ namespace RuntimeSpiesTest
                 b
             };
 
-            var myDeclaration = VariableLiteral.GetNewLiteral(myList).GetDeclaration();
+            var myDeclaration = VariableLiteral.GetNewLiteral(myList).GetLiteral();
 
             Assert.AreEqual("new List<RuntimeSpiesTest.TestClass>{new TestClass {FieldA = 4,FieldB = \"Hello\\nHello\",FieldC = true,FieldD = \'\\n\',FieldE = 123443435465,FieldF = 123.453F},new TestClass {FieldA = 4,FieldB = \"Hello\\nHello\\nHello\",FieldC = false,FieldD = \'\\n\',FieldE = 12653443435465,FieldF = 123.4765F}}",
                 myDeclaration);
