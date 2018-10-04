@@ -18,7 +18,8 @@ namespace RuntimeSpies
 
         public static VariableLiteral GetNewLiteral(object myObject)
         {
-            var a = myObject.GetType();
+            if (myObject == null)
+                return new VariableLiteralNull(myObject);
             if (myObject is Array)
                 return new VariableLiteralArray(myObject);
             if (myObject is bool)
@@ -81,12 +82,15 @@ namespace RuntimeSpies
             foreach (var property in this.MyObject.GetType().GetProperties())
             {
 
-                if (propertyIndex > 0)
-                    declaration += ",";
-                declaration += property.Name + " = " +
-                               VariableLiteral.GetNewLiteral(property.GetValue(this.MyObject, null)).GetLiteral();
+                if (property.GetGetMethod() != null)
+                {
+                    if (propertyIndex > 0)
+                        declaration += ",";
+                    declaration += property.Name + " = " +
+                                   VariableLiteral.GetNewLiteral(property.GetValue(this.MyObject, null)).GetLiteral();
 
-                propertyIndex++;
+                    propertyIndex++;
+                }
             }
             declaration += "}";
             return declaration;
@@ -174,6 +178,22 @@ namespace RuntimeSpies
             var declaration = this.MyObject.ToString() + "F";
 
             return declaration;
+        }
+    }
+
+    internal class VariableLiteralNull : VariableLiteral
+    {
+
+
+        internal VariableLiteralNull(object myObject) : base(myObject)
+        {
+
+        }
+
+        public override string GetLiteral()
+        {
+
+            return "null";
         }
     }
 

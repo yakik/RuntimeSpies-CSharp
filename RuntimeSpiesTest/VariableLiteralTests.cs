@@ -21,11 +21,67 @@ namespace RuntimeSpiesTest
 
     }
 
+    class TestClassNoGetter
+    {
+        public TestClassNoGetter()
+        {
+        }
+
+        private int _FieldA;
+        public int FieldA
+        {
+            set { _FieldA = value; }
+        }
+        public String FieldB { get; set; }
+
+    }
+
     [TestClass]
     public class VariableLiteralTests
     {
-       
-       
+        [TestMethod]
+        public void NoGetterTest()
+        {
+            var a = new TestClassNoGetter
+            {
+                FieldA = 5,
+                FieldB = "Hi!",
+            };
+            var myDeclaration = VariableLiteral.GetNewLiteral(a).GetLiteral();
+
+            Assert.AreEqual("new TestClassNoGetter {FieldB = \"Hi!\"}",
+                myDeclaration);
+        }
+
+        [TestMethod]
+        public void NullTests()
+        {
+            TestClass a = null;
+            var myDeclaration = VariableLiteral.GetNewLiteral(a).GetLiteral();
+
+            Assert.AreEqual("null",
+                myDeclaration);
+        }
+
+        [TestMethod]
+        public void NullPropertyTests()
+        {
+            var a = new TestClass
+            {
+                FieldA = 5,
+                FieldB = null,
+                FieldC = true,
+                FieldD = '\n',
+                FieldE = 123443435465,
+                FieldF = 123.453F
+            };
+            var myDeclaration = VariableLiteral.GetNewLiteral(a).GetLiteral();
+
+            Assert.AreEqual("new TestClass {FieldA = 5,FieldB = null,FieldC = true,FieldD = '\\n',FieldE = 123443435465,FieldF = 123.453F}",
+                myDeclaration);
+        }
+
+
 
         [TestMethod]
         public void PrimitiveAndClassTests()
@@ -43,9 +99,7 @@ namespace RuntimeSpiesTest
 
             Assert.AreEqual("new TestClass {FieldA = 4,FieldB = \"Hello\\nHello\",FieldC = true,FieldD = '\\n',FieldE = 123443435465,FieldF = 123.453F}",
                 myDeclaration);
-           
         }
-
 
         [TestMethod]
         public void ArrayTests()
