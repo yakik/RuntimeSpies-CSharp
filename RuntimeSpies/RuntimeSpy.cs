@@ -13,12 +13,14 @@ namespace RuntimeSpiesTest
         {
             public string Name { get; set; }
             public string ValueLiteral { get; set; }
+            
             public methodParameter(string name, string valueLiteral)
             {
                 this.Name = name;
                 this.ValueLiteral = valueLiteral;
             }
         }
+        private string ReturnedLiteral = null;
         private string _methodSpiedName;
         private List<methodParameter> _methodParameters = new List<methodParameter>();
 
@@ -52,11 +54,12 @@ namespace RuntimeSpiesTest
             string harness = "";
             foreach (var parameter in _methodParameters)
             {
-                harness += parameter.Name + " = " + parameter.ValueLiteral + " ;\n";
+                harness += "var " + parameter.Name + " = " + parameter.ValueLiteral + " ;\n";
             }
 
             harness += "\n";
-            harness += _methodSpiedName + "(" + getCommaSeparatedParametersList() + ");\n";
+            harness += "Assert.AreEqual(\""+this.ReturnedLiteral + "\""+
+                       ", VariableLiteral.GetNewLiteral("+_methodSpiedName + "(" + getCommaSeparatedParametersList() + ").getLiteral());\n";
             return harness;
 
         }
@@ -73,6 +76,11 @@ namespace RuntimeSpiesTest
 
         
 
+        }
+
+        public void setMethodReturnValue(object returnedValue)
+        {
+            this.ReturnedLiteral = VariableLiteral.GetNewLiteral(returnedValue).GetLiteral();
         }
     }
 }

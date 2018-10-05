@@ -8,18 +8,24 @@ namespace RuntimeSpiesTest
     [TestClass]
     public class RuntimeSpyTests
     {
-        private string testFunction(int a, string b)
+        private string harness = "";
+
+        private int[] testFunction(int a, string b)
         {
             var mySpy = new RuntimeSpy();
             mySpy.SetMethodCall(MethodBase.GetCurrentMethod(), a, b);
-
-            return mySpy.getHarness();
+            int[] returnedArray = new int[] {1,2,3,4};
+            mySpy.setMethodReturnValue(returnedArray);
+            harness = mySpy.getHarness();
+            return returnedArray;
         }
 
         [TestMethod]
-        public void TestMethod1()
+        public void TestHarness()
         {
-            Assert.AreEqual("a = 23 ;\nb = \"twenty three\" ;\n\ntestFunction(a, b);\n", testFunction(23,"twenty three"));
+            testFunction(23, "twenty three");
+            Assert.AreEqual("var a = 23 ;\nvar b = \"twenty three\" ;\n\nAssert.AreEqual(\"new System.Int32[] {1,2,3,4}\", VariableLiteral.GetNewLiteral(testFunction(a, b).getLiteral());\n",
+                harness);
         }
     }
 }
