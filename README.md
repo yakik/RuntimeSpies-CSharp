@@ -6,79 +6,52 @@ Writing unit tests for legcy code isn't easy. One of the problems is that the co
 The problem we're trying to solve here is to help harnessing legacy code into a unit test.
 
 ### Runtime Spies - CSharp
-The Runtime Spies are pieces of code you add to your code (on a side branch - this doesn't go into production) which capture traffic going into and out of the code you want to test (is it one function? A set of function? That's for you to decide).
+The Runtime Spies are pieces of code you add to your code (on a side branch - it doesn't go into production) which capture traffic going into and out of the code you want to test (is it one function? A set of function? That's for you to decide).
 After adding the code you run scenarios in the integration environenment. The Runtime spies capture the traffic and produce a harness for the unit test.
 
-Then you should start refactoring.
+Currently Runtime Spies works well with simple parameters: primitives, arrays, lists, classes setup with straightforward properties. Odds are you will need to do some refactoring to get to the situation where it works. This is how it goes: to even start having some automated tests you need to do some refactoring. The refactoring you should do when not having automated tests should be very simple: do them one small step at a time, testing as much as you can. 
 
 ## Main Features
-- Capture the arguments sent into a function and producing literals that can be used in a unit test harness to simulate the call.
+- Capture the arguments sent into a function and producing a harness to simulate the call.
 
 ### example (see explanation below)
 This is taken from one unit test from the project. 
 ```cs
-[TestMethod]
-public void PrimitiveAndClassTests()
-{
-  var a = new TestClass
-  {
-    FieldA = 4,
-    FieldB = "Hello\nHello",
-    FieldC = true,
-    FieldD = '\n',
-    FieldE = 123443435465,
-    FieldF = 123.453F
-  };
-  var myDeclaration = VariableLiteral.GetNewLiteral(a).GetLiteral(); //That's the API currently supported
+[public class RuntimeSpyTests
+    {
+        private string harness = "";
 
-  Assert.AreEqual("new TestClass {FieldA = 4,FieldB = \"Hello\\nHello\",FieldC = true,FieldD = '\\n',FieldE = 123443435465,FieldF =       123.453F}",myDeclaration);
-}
+        private int[] testFunction(int a, string b) //This is function we want to create unit test harness for
+        {
+            // this is the bit of code (in this simple example it is bigger than the functioin itself...) we add to the original function, on a side branch
+            var mySpy = new RuntimeSpy(); //Initialize the RuntimeSpy
+            mySpy.HowToInstantiateMethodClass = "//No special treatment\n"; //Code to instantiate the class that the tested methid is on
+            //In this case we don't need to instantiate any class as the function is accessible directly.
+            //In another case it might be var a = new testedClass();
+            mySpy.HowToCallMethod = "testFunction"; //How to call the method. Here it is simple.
+            //In another case it would be a.testedmethod
+            mySpy.SetMethodParameters(MethodBase.GetCurrentMethod(), a, b); //first parameter always MethodBase.GetCurrentMethod()
+            //the other parameters are the parameters of the tested method, in the right order
+           // End out bit of code
+           
+            int[] returnedArray = new int[] {1,2,3,4}; //original function
+            
+            mySpy.setMethodReturnValue(returnedArray); //this to assert the return value of the method
+            harness = mySpy.getHarness(); // this returns the harness. You will usually write this to the console or to a file
+            // here we assign it to a variable to assert later
+            
+            return returnedArray; //original functioin
+        }
+
+        [TestMethod]
+        public void TestHarness()
+        {
+            testFunction(23, "twenty three");
+            Assert.AreEqual("******Begin UT******\n//No special treatment\n\nvar a = 23 ;\nvar b = \"twenty three\" ;\n\nAssert.AreEqual(\"new System.Int32[] {1,2,3,4}\", VariableLiteral.GetNewLiteral(testFunction(a, b).getLiteral());\n******End UT******\n", harness);
+        }
+    }
 ```
-Another example
-```cs
-[TestMethod]
-public void ArrayTests()
-{
-  int[] myArray = {1, 2, 3, 4, 5};
-  var myDeclaration = VariableLiteral.GetNewLiteral(myArray).GetLiteral();
-  Assert.AreEqual("new System.Int32[] {1,2,3,4,5}",myDeclaration);
-}
-```
-And last one
-```cs
-[TestMethod]
-public void ListTests()
-{
-  var a = new TestClass
-  {
-    FieldA = 4,
-    FieldB = "Hello\nHello",
-    FieldC = true,
-    FieldD = '\n',
-    FieldE = 123443435465,
-    FieldF = 123.453F
-  };
-  var b = new TestClass
-  {
-    FieldA = 4,
-    FieldB = "Hello\nHello\nHello",
-    FieldC = false,
-    FieldD = '\n',
-    FieldE = 12653443435465,
-    FieldF = 123.47653F
-  };
 
-  List<TestClass> myList = new List<TestClass>
-  {
-    a,
-    b
-  };
-
-  var myDeclaration = VariableLiteral.GetNewLiteral(myList).GetLiteral();
-
-  Assert.AreEqual("new List<RuntimeSpiesTest.TestClass>{new TestClass {FieldA = 4,FieldB = \"Hello\\nHello\",FieldC = true,FieldD = \'\\n\',FieldE = 123443435465,FieldF = 123.453F},new TestClass {FieldA = 4,FieldB = \"Hello\\nHello\\nHello\",FieldC = false,FieldD = \'\\n\',FieldE = 12653443435465,FieldF = 123.4765F}}",myDeclaration);
-}
-```
 ### Known Limitations
 This is to be use only in a testing environment. Not all Csharp types are supported.
 
