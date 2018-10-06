@@ -20,9 +20,14 @@ namespace RuntimeSpiesTest
                 this.ValueLiteral = valueLiteral;
             }
         }
-        private string ReturnedLiteral = null;
-        private string _methodSpiedName;
-        private List<methodParameter> _methodParameters = new List<methodParameter>();
+
+        public string HowToInstantiateMethodClass { get; set; }
+        public string HowToCallMethod { get; set; }
+        string ReturnedLiteral = null;
+        string MethodSpiedName;
+        List<methodParameter> _methodParameters = new List<methodParameter>();
+
+        
 
         private void addParameter(string name, object value)
         {
@@ -51,7 +56,8 @@ namespace RuntimeSpiesTest
 
         public string getHarness()
         {
-            string harness = "";
+            string harness = "******Begin UT******\n";
+            harness += HowToInstantiateMethodClass + "\n";
             foreach (var parameter in _methodParameters)
             {
                 harness += "var " + parameter.Name + " = " + parameter.ValueLiteral + " ;\n";
@@ -59,14 +65,15 @@ namespace RuntimeSpiesTest
 
             harness += "\n";
             harness += "Assert.AreEqual(\""+this.ReturnedLiteral + "\""+
-                       ", VariableLiteral.GetNewLiteral("+_methodSpiedName + "(" + getCommaSeparatedParametersList() + ").getLiteral());\n";
+                       ", VariableLiteral.GetNewLiteral("+ HowToCallMethod + "(" + getCommaSeparatedParametersList() + ").getLiteral());\n";
+            harness += "******End UT******\n";
             return harness;
 
         }
 
-        public void SetMethodCall(MethodBase methodInfo, params object[] values)
+        public void SetMethodParameters(MethodBase methodInfo, params object[] values)
         {
-            _methodSpiedName = methodInfo.Name;
+            MethodSpiedName = methodInfo.Name;
             int parameterIndex = 0;
             foreach (var parameter in methodInfo.GetParameters())
             {
