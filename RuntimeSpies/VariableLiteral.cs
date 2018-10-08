@@ -20,6 +20,8 @@ namespace RuntimeSpies
         {
             if (myObject == null)
                 return new VariableLiteralNull(myObject);
+            if (myObject is Enum)
+                return new VariableLiteralEnum(myObject);
             if (myObject is Array)
                 return new VariableLiteralArray(myObject);
             if (myObject is bool)
@@ -64,6 +66,30 @@ namespace RuntimeSpies
                 listItemIndex++;
             }
             declaration += "}";
+            return declaration;
+        }
+    }
+
+    internal class VariableLiteralEnum : VariableLiteral
+    {
+        internal VariableLiteralEnum(object myObject) : base(myObject)
+        {
+
+        }
+
+        public override string GetLiteral()
+        {
+            var declaration = "";
+            int index = 0;
+            foreach (Enum value in Enum.GetValues(this.MyObject.GetType()))
+            {
+                if (((Enum) this.MyObject).HasFlag(value))
+                {
+                    if (index > 0) declaration += " | ";
+                    declaration += this.MyObject.GetType().Name + "." + value;
+                    index++;
+                }
+            }
             return declaration;
         }
     }

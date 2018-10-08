@@ -27,6 +27,8 @@ namespace RuntimeSpiesTest
         {
         }
 
+        
+
         private int _FieldA;
         public int FieldA
         {
@@ -39,6 +41,8 @@ namespace RuntimeSpiesTest
     [TestClass]
     public class VariableLiteralTests
     {
+        enum Days { Sun, Mon, tue, Wed, thu, Fri, Sat };
+        [Flags] enum myColors { Red = 1, Green = 2, Yellow = 4, Blue = 8 }
         [TestMethod]
         public void NoGetterTest()
         {
@@ -110,6 +114,35 @@ namespace RuntimeSpiesTest
             var myDeclaration = VariableLiteral.GetNewLiteral(myArray).GetLiteral();
 
             Assert.AreEqual("new System.Int32[] {1,2,3,4,5}",
+                myDeclaration);
+
+
+
+        }
+
+        [TestMethod]
+        public void EnumTests()
+        {
+            Days myDay = Days.Sun;
+           
+
+        var myDeclaration = VariableLiteral.GetNewLiteral(myDay).GetLiteral();
+
+            Assert.AreEqual("Days.Sun",
+                myDeclaration);
+
+
+
+        }
+
+        [TestMethod]
+        public void EnumFlagsTests()
+        {
+            myColors testColors = myColors.Blue | myColors.Green;
+
+            var myDeclaration = VariableLiteral.GetNewLiteral(testColors).GetLiteral();
+
+            Assert.AreEqual("myColors.Green | myColors.Blue",
                 myDeclaration);
 
 
