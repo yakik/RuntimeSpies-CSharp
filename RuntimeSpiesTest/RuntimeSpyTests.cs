@@ -1,7 +1,9 @@
 ﻿using System;
 using System.ComponentModel;
+using System.IO;
 using System.Reflection;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
+using RuntimeSpies;
 
 namespace RuntimeSpiesTest
 {
@@ -10,24 +12,28 @@ namespace RuntimeSpiesTest
     {
         private string harness = "";
 
-        private int[] testFunction(int a, string b)
+        private int testFunction(int a, int b)
         {
             var mySpy = new RuntimeSpy();
             mySpy.HowToInstantiateMethodClass = "//No special treatment\n";
-            mySpy.HowToCallMethod = "testFunction";
             mySpy.SetMethodParameters(MethodBase.GetCurrentMethod(), a, b);
-            int[] returnedArray = new int[] { 1, 2, 3, 4 };
-            mySpy.setMethodReturnValue(returnedArray);
-            harness = mySpy.getHarness();
-            return returnedArray;
+            mySpy.HowToCallMethod = "testFunction";
+            var c = a + b;
+            mySpy.setMethodReturnValue(c);
+            mySpy.addToTestFile("myTestMethod", "myTestClass", "myNamespace", "testFile.cs");
+            return c;
         }
 
         [TestMethod]
         public void TestHarness()
         {
-            testFunction(23, "twenty three");
-            Assert.AreEqual("//No special treatment\n\nvar a = 23 ;\nvar b = \"twenty three\" ;\n\nAssert.AreEqual(\"new System.Int32[] {1,2,3,4}\", VariableLiteral.GetNewLiteral(testFunction(a, b).getLiteral());\n",
-                harness);
+            RuntimeSpySequence.Reset();
+            File.Delete("testFile.cs");
+            testFunction(23, 3);
+            testFunction(1, 2);
+            testFunction(-34, 23);
+            //  Assert.AreEqual("//No special treatment\n\nvar a = 23 ;\nvar b = \"twenty three\" ;\n\nAssert.AreEqual(\"new System.Int32[] {1,2,3,4}\", VariableLiteral.GetNewLiteral(testFunction(a, b).getLiteral());\n",
+            //   harness);
         }
     }
 }

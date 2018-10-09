@@ -65,7 +65,7 @@ namespace RuntimeSpiesTest
 
             harness += "\n";
             harness += "Assert.AreEqual(\""+this.ReturnedLiteral + "\""+
-                       ", VariableLiteral.GetNewLiteral("+ HowToCallMethod + "(" + getCommaSeparatedParametersList() + ").getLiteral());\n";
+                       ", VariableLiteral.GetNewLiteral("+ HowToCallMethod + "(" + getCommaSeparatedParametersList() + ")).GetLiteral());\n";
             harness += "";
             return harness;
 
@@ -88,6 +88,13 @@ namespace RuntimeSpiesTest
         public void setMethodReturnValue(object returnedValue)
         {
             this.ReturnedLiteral = VariableLiteral.GetNewLiteral(returnedValue).GetLiteral();
+        }
+
+        public void addToTestFile(string testMethodName, string testClassName, string testNamespaceName, string testFileName)
+        {
+            RuntimeSpyFileManager.UpdateTestFile(testFileName,
+                RuntimeSpyUnitTestGenerator.AddCodeAsUnitTestToTestClass(getHarness(), testMethodName, testClassName, testNamespaceName,
+                    RuntimeSpyFileManager.GetTestFileCode(testFileName)));
         }
     }
 

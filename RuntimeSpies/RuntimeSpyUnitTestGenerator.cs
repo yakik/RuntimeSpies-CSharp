@@ -40,7 +40,7 @@ namespace RuntimeSpies
         public static string AddCodeAsUnitTestToTestClass(string code, string unitTestName, string testClassName,
             string testNamespaceName, string currentClassCode)
         {
-            if (currentClassCode == "")
+            if (currentClassCode == "EMPTY")
                 return GetUnitTestClass(GetUnitTestMethod(code, unitTestName), testClassName,
                     testNamespaceName);
             else
