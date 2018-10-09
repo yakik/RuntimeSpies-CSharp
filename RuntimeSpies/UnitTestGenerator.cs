@@ -22,7 +22,13 @@ namespace RuntimeSpies
 
         public static string GetUnitTestMethod(string code, string unitTestName)
         {
-            return beforeTestMethod + unitTestName + "(\n{\n" + code + "\n}\n";
+            return beforeTestMethod + unitTestName + "()\n{\n" + code + "\n}\n";
+        }
+
+        public static string GetUnitTestClass(string myCode, string myTestClassName, string myNamespace)
+        {
+            return beforeNamespaceCode + "\nnamespace " + myNamespace + "{\n\n" +
+                   startClassCode + myTestClassName + "\n{\n" + myCode + "\n}\n}";
         }
     }
 }
