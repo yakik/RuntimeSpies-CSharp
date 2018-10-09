@@ -21,7 +21,7 @@ This is taken from one unit test from the project.
     {
         private string harness = "";
 
-        private int[] testFunction(int a, string b) //This is function we want to create unit test harness for
+        private int[] testFunction(int a, int b) //This is function we want to create unit test harness for
         {
             // this is the bit of code (in this simple example it is bigger than the functioin itself...) we add to the original function, on a side branch
             var mySpy = new RuntimeSpy(); //Initialize the RuntimeSpy
@@ -34,20 +34,24 @@ This is taken from one unit test from the project.
             //the other parameters are the parameters of the tested method, in the right order
            // End out bit of code
            
-            int[] returnedArray = new int[] {1,2,3,4}; //original function
+            var c = a + b; //original function
             
-            mySpy.setMethodReturnValue(returnedArray); //this to assert the return value of the method
-            harness = mySpy.getHarness(); // this returns the harness. You will usually write this to the console or to a file
-            // here we assign it to a variable to assert later
+            mySpy.setMethodReturnValue(c); //this to assert the return value of the method
+            mySpy.addToTestFile("myTestMethod", "myTestClass", "myNamespace", "testFile.cs"); // this creates a file "testFile.cs" with a test class called "myTestClass" (namespace is "myNameSpace"). The test method name will start with "myTestMethod". If this runs several times several test methods will be created with a sequence at the end ("myTestMethod0", "myTestMethod1" etc.)
             
-            return returnedArray; //original functioin
+            return c; //original functioin
         }
 
-        [TestMethod]
+       [TestMethod]
         public void TestHarness()
         {
-            testFunction(23, "twenty three");
-            Assert.AreEqual("******Begin UT******\n//No special treatment\n\nvar a = 23 ;\nvar b = \"twenty three\" ;\n\nAssert.AreEqual(\"new System.Int32[] {1,2,3,4}\", VariableLiteral.GetNewLiteral(testFunction(a, b).getLiteral());\n******End UT******\n", harness);
+            RuntimeSpySequence.Reset();
+            File.Delete("testFile.cs");
+            testFunction(23, 3);
+            testFunction(1, 2);
+            testFunction(-34, 23);
+            FileAssert.AreEqual(@"testFile.cs", @"..\..\testFileMASTER.cs");
+            //All that's left to do is to add testFile.cs to your test project, open it and add the required using statements
         }
     }
 ```
