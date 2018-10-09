@@ -50,7 +50,8 @@
   <ItemGroup>
     <Compile Include="RuntimeSpyTests.cs" />
     <Compile Include="RuntimeSpySequenceTests.cs" />
-    <Compile Include="UnitTestGeneratorTests.cs" />
+    <Compile Include="RuntimeSpyFileManagerTests.cs" />
+    <Compile Include="RuntimeSpyUnitTestGeneratorTests.cs" />
     <Compile Include="VariableLiteralTests.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
