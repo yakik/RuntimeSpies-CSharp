@@ -56,7 +56,7 @@ namespace RuntimeSpiesTest
 
         public string getHarness()
         {
-            string harness = "******Begin UT******\n";
+            string harness = "";
             harness += HowToInstantiateMethodClass + "\n";
             foreach (var parameter in _methodParameters)
             {
@@ -66,7 +66,7 @@ namespace RuntimeSpiesTest
             harness += "\n";
             harness += "Assert.AreEqual(\""+this.ReturnedLiteral + "\""+
                        ", VariableLiteral.GetNewLiteral("+ HowToCallMethod + "(" + getCommaSeparatedParametersList() + ").getLiteral());\n";
-            harness += "******End UT******\n";
+            harness += "";
             return harness;
 
         }
@@ -90,4 +90,7 @@ namespace RuntimeSpiesTest
             this.ReturnedLiteral = VariableLiteral.GetNewLiteral(returnedValue).GetLiteral();
         }
     }
+
+    
+
 }

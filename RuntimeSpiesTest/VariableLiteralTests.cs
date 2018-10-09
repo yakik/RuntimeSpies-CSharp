@@ -144,9 +144,6 @@ namespace RuntimeSpiesTest
 
             Assert.AreEqual("myColors.Green | myColors.Blue",
                 myDeclaration);
-
-
-
         }
 
         [TestMethod]
