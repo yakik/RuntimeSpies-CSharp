@@ -32,6 +32,7 @@ namespace RuntimeSpiesTest
             testFunction(23, 3);
             testFunction(1, 2);
             testFunction(-34, 23);
+            FileAssert.AreEqual(@"testFile.cs", @"..\..\testFileMASTER.cs");
             //  Assert.AreEqual("//No special treatment\n\nvar a = 23 ;\nvar b = \"twenty three\" ;\n\nAssert.AreEqual(\"new System.Int32[] {1,2,3,4}\", VariableLiteral.GetNewLiteral(testFunction(a, b).getLiteral());\n",
             //   harness);
         }
