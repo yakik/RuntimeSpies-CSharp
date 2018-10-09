@@ -30,5 +30,10 @@ namespace RuntimeSpies
             return beforeNamespaceCode + "\nnamespace " + myNamespace + "{\n\n" +
                    startClassCode + myTestClassName + "\n{\n" + myCode + "\n}\n}";
         }
+
+        public static string GetTestClassWithAdditionalTest(string myTestClass, string myNewTestMethod)
+        {
+            return myTestClass.Substring(0,myTestClass.Length - 3) + myNewTestMethod + "\n}\n}";
+        }
     }
 }

@@ -25,5 +25,22 @@ namespace RuntimeSpiesTest
                 "[TestMethod]\npublic void myTestName()\n{\nvar i = 3;\n}\n\n}\n}",
                 UnitTestGenerator.GetUnitTestClass(myCode, "myTestClassName", "myNamespace"));
         }
+
+        [TestMethod]
+        public void AddingTestMethodToATestClass()
+        {
+            string myTestClass = "using System;\nusing Microsoft.VisualStudio.TestTools.UnitTesting;\n" +
+                                  "\nnamespace myNamespace{\n\n" +
+                                  "[TestClass]\npublic class myTestClassName\n{\n" +
+                                  "[TestMethod]\npublic void myTestName()\n{\nvar i = 3;\n}\n\n}\n}";
+            string myNewTestMethod = "[TestMethod]\npublic void myTestName2()\n{\nvar i = 3;\n}\n";
+            Assert.AreEqual("using System;\nusing Microsoft.VisualStudio.TestTools.UnitTesting;\n" +
+                            "\nnamespace myNamespace{\n\n" +
+                            "[TestClass]\npublic class myTestClassName\n{\n" +
+                            "[TestMethod]\npublic void myTestName()\n{\nvar i = 3;\n}\n\n"+
+                            "[TestMethod]\npublic void myTestName2()\n{\nvar i = 3;\n}"+
+                            "\n\n}\n}",
+                UnitTestGenerator.GetTestClassWithAdditionalTest(myTestClass, myNewTestMethod));
+        }
     }
 }
