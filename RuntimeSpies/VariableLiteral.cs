@@ -78,6 +78,7 @@ namespace RuntimeSpies
         }
 
         internal static bool HasFlag(Enum variable, Enum value)
+        //Source: https://forums.asp.net/t/1813357.aspx?Hasflag+function+is+not+working+in+framework+3+5
         {
             // check if from the same type.
             if (variable.GetType() != value.GetType())
