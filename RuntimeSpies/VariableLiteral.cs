@@ -77,13 +77,29 @@ namespace RuntimeSpies
 
         }
 
+        internal static bool HasFlag(Enum variable, Enum value)
+        {
+            // check if from the same type.
+            if (variable.GetType() != value.GetType())
+            {
+                throw new ArgumentException("The checked flag is not from the same type as the checked variable.");
+            }
+
+            Convert.ToUInt64(value);
+            ulong num = Convert.ToUInt64(value);
+            ulong num2 = Convert.ToUInt64(variable);
+
+            return (num2 & num) == num;
+        }
+
         public override string GetLiteral()
         {
             var declaration = "";
             int index = 0;
             foreach (Enum value in Enum.GetValues(this.MyObject.GetType()))
             {
-                if (((Enum) this.MyObject).HasFlag(value))
+                // if (((Enum) this.MyObject).HasFlag(value)) //This is for .Net 4 and up
+                if (HasFlag((Enum)this.MyObject, value)) //This to support .Net 3.5
                 {
                     if (index > 0) declaration += " | ";
                     declaration += this.MyObject.GetType().Name + "." + value;
