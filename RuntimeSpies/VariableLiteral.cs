@@ -179,7 +179,9 @@ namespace RuntimeSpies
 
         public override string GetLiteral()
         {
-            var declaration = "\"" + this.MyString.Replace("\n", "\\n") + "\"";
+            var declaration = "\"" + this.MyString.Replace("\\","\\\\").Replace("\n", "\\n").Replace("\r", "\\r").
+                                  Replace("\"", "\\\"").Replace("\v", "\\v").Replace("\t", "\\t").
+                                  Replace("\'", "\\\'") + "\"";
 
             return declaration;
         }

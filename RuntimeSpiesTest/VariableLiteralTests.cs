@@ -93,7 +93,7 @@ namespace RuntimeSpiesTest
             var a = new TestClass
             {
                 FieldA = 4,
-                FieldB = "Hello\nHello",
+                FieldB = "Hello\r\nHello\tmy\'Tab\"\v",
                 FieldC = true,
                 FieldD = '\n',
                 FieldE = 123443435465,
@@ -101,7 +101,7 @@ namespace RuntimeSpiesTest
             };
             var myDeclaration = VariableLiteral.GetNewLiteral(a).GetLiteral();
 
-            Assert.AreEqual("new TestClass {FieldA = 4,FieldB = \"Hello\\nHello\",FieldC = true,FieldD = '\\n',FieldE = 123443435465,FieldF = 123.453F}",
+            Assert.AreEqual("new TestClass {FieldA = 4,FieldB = \"Hello\\r\\nHello\\tmy\\\'Tab\\\"\\v\",FieldC = true,FieldD = '\\n',FieldE = 123443435465,FieldF = 123.453F}",
                 myDeclaration);
         }
 

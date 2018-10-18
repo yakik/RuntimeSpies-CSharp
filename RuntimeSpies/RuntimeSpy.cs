@@ -64,7 +64,7 @@ namespace RuntimeSpiesTest
             }
 
             harness += "\n";
-            harness += "Assert.AreEqual(\""+this.ReturnedLiteral + "\""+
+            harness += "Assert.AreEqual("+ this.ReturnedLiteral +
                        ", VariableLiteral.GetNewLiteral("+ HowToCallMethod + "(" + getCommaSeparatedParametersList() + ")).GetLiteral());\n";
             harness += "";
             return harness;

@@ -13,8 +13,9 @@ public void myTestMethod0()
 
 var a = 23 ;
 var b = 3 ;
+var d = "Hi \n \" \\ \v \t \r" ;
 
-Assert.AreEqual("26", VariableLiteral.GetNewLiteral(testFunction(a, b)).GetLiteral());
+Assert.AreEqual("Hi \n \" \\ \v \t \r26", VariableLiteral.GetNewLiteral(testFunction(a, b, d)).GetLiteral());
 
 }
 
@@ -25,8 +26,9 @@ public void myTestMethod1()
 
 var a = 1 ;
 var b = 2 ;
+var d = "Hello\nHello\n" ;
 
-Assert.AreEqual("3", VariableLiteral.GetNewLiteral(testFunction(a, b)).GetLiteral());
+Assert.AreEqual("Hello\nHello\n3", VariableLiteral.GetNewLiteral(testFunction(a, b, d)).GetLiteral());
 
 }
 
@@ -37,8 +39,9 @@ public void myTestMethod2()
 
 var a = -34 ;
 var b = 23 ;
+var d = "AAAAA" ;
 
-Assert.AreEqual("-11", VariableLiteral.GetNewLiteral(testFunction(a, b)).GetLiteral());
+Assert.AreEqual("AAAAA-11", VariableLiteral.GetNewLiteral(testFunction(a, b, d)).GetLiteral());
 
 }
 
