@@ -37,6 +37,19 @@ public void myTestMethod2()
 {
 //No special treatment
 
+var a = 2 ;
+var b = 4 ;
+var d = "שלום\"שלום" ;
+
+Assert.AreEqual("שלום\"שלום6", VariableLiteral.GetNewLiteral(testFunction(a, b, d)).GetLiteral());
+
+}
+
+[TestMethod]
+public void myTestMethod3()
+{
+//No special treatment
+
 var a = -34 ;
 var b = 23 ;
 var d = "AAAAA" ;

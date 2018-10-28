@@ -29,6 +29,7 @@ namespace RuntimeSpiesTest
             File.Delete("testFile.cs");
             testFunction(23, 3, "Hi \n \" \\ \v \t \r");
             testFunction(1, 2, "Hello\nHello\n");
+            testFunction(2, 4, "שלום\"שלום");
             testFunction(-34, 23, "AAAAA");
             FileAssert.AreEqual(@"testFile.cs", @"..\..\testFileMASTER.cs");
         }
