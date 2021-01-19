@@ -8,77 +8,46 @@ using System.Threading.Tasks;
 
 namespace RuntimeSpies
 {
-    abstract public class VariableLiteral
+    public abstract class VariableLiteral
     {
         protected object MyObject;
         internal VariableLiteral(object myObject)
         {
-            this.MyObject = myObject;
+            MyObject = myObject;
         }
 
-        public static VariableLiteral GetNewLiteral(object myObject)
+        public static String GetNewLiteral(object myObject)
         {
-            if (myObject == null)
-                return new VariableLiteralNull(myObject);
-            if (myObject is Enum)
-                return new VariableLiteralEnum(myObject);
-            if (myObject is Array)
-                return new VariableLiteralArray(myObject);
-            if (myObject is bool)
-                return new VariableLiteralBool(myObject);
-            if (myObject is char)
-                return new VariableLiteralChar(myObject);
-            if (myObject is float)
-                return new VariableLiteralFloat(myObject);
-            if (myObject is string)
-                return new VariableLiteralString(myObject);
-            if (myObject is IList && myObject.GetType().IsGenericType)
-                return new VariableLiteralList(myObject);
-            if (myObject.GetType().IsClass)
-                return new VariableLiteralClass(myObject);
-
-            return new VariableLiteralSimple(myObject);
-        }
-
-        public abstract string GetLiteral();
-
-    }
-
-    internal class VariableLiteralList : VariableLiteral
-    {
-        internal VariableLiteralList(object myObject) : base(myObject)
-        {
-
-        }
-
-        public override string GetLiteral()
-        {
-            var declaration = "new List<" + this.MyObject.GetType().GetGenericArguments().Single() + ">{";
-            var myCollection = (IEnumerable)this.MyObject;
-            var listItemIndex = 0;
-            foreach (var listItem in myCollection)
+            switch (myObject)
             {
-
-                if (listItemIndex > 0)
-                    declaration += ",";
-                declaration += VariableLiteral.GetNewLiteral(listItem).GetLiteral();
-
-                listItemIndex++;
+                case null:
+                    return GetNullLiteral(myObject);
+                case Enum _:
+                    return GetEnumLiteral(myObject);
+                case Array _:
+                    return GetArrayLiteral(myObject);
+                case bool _:
+                    return GetBoolLiteral(myObject);
+                case char _:
+                    return GetCharLiteral(myObject);
+                case float _:
+                    return GetFloatLiteral(myObject);
+                case string _:
+                    return GetStringLiteral(myObject);
+                case IList _ when myObject.GetType().IsGenericType:
+                    return  GetIListLiteral(myObject);
             }
-            declaration += "}";
-            return declaration;
-        }
-    }
 
-    internal class VariableLiteralEnum : VariableLiteral
-    {
-        internal VariableLiteralEnum(object myObject) : base(myObject)
-        {
+            if (myObject.GetType().IsClass)
+                return GetClassLiteral(myObject);
 
+            return GetSimpleLiteral(myObject);
         }
+
+        
 
         internal static bool HasFlag(Enum variable, Enum value)
-        //Source: https://forums.asp.net/t/1813357.aspx?Hasflag+function+is+not+working+in+framework+3+5
+            //Source: https://forums.asp.net/t/1813357.aspx?Hasflag+function+is+not+working+in+framework+3+5
         {
             // check if from the same type.
             if (variable.GetType() != value.GetType())
@@ -93,36 +62,48 @@ namespace RuntimeSpies
             return (num2 & num) == num;
         }
 
-        public override string GetLiteral()
+        public  static String GetEnumLiteral(object MyObject)
         {
             var declaration = "";
             int index = 0;
-            foreach (Enum value in Enum.GetValues(this.MyObject.GetType()))
+            foreach (Enum value in Enum.GetValues(MyObject.GetType()))
             {
-                // if (((Enum) this.MyObject).HasFlag(value)) //This is for .Net 4 and up
-                if (HasFlag((Enum)this.MyObject, value)) //This to support .Net 3.5
+                // if (((Enum) MyObject).HasFlag(value)) //This is for .Net 4 and up
+                if (HasFlag((Enum)MyObject, value)) //This to support .Net 3.5
                 {
                     if (index > 0) declaration += " | ";
-                    declaration += this.MyObject.GetType().Name + "." + value;
+                    declaration += MyObject.GetType().Name + "." + value;
                     index++;
                 }
             }
             return declaration;
         }
-    }
 
-    internal class VariableLiteralClass : VariableLiteral
-    {
-        internal VariableLiteralClass(object myObject) : base(myObject)
+
+
+        public static String GetIListLiteral(object MyObject)
         {
+            var declaration = "new List<" + MyObject.GetType().GetGenericArguments().Single() + ">{";
+            var myCollection = (IEnumerable)MyObject;
+            var listItemIndex = 0;
+            foreach (var listItem in myCollection)
+            {
 
+                if (listItemIndex > 0)
+                    declaration += ",";
+                declaration += VariableLiteral.GetNewLiteral(listItem);
+
+                listItemIndex++;
+            }
+            declaration += "}";
+            return declaration;
         }
 
-        public override string GetLiteral()
+        public  static String GetClassLiteral(object MyObject)
         {
-            var declaration = "new " + this.MyObject.GetType().Name + " {";
+            var declaration = "new " + MyObject.GetType().Name + " {";
             var propertyIndex = 0;
-            foreach (var property in this.MyObject.GetType().GetProperties())
+            foreach (var property in MyObject.GetType().GetProperties())
             {
 
                 if (property.GetGetMethod() != null)
@@ -130,7 +111,7 @@ namespace RuntimeSpies
                     if (propertyIndex > 0)
                         declaration += ",";
                     declaration += property.Name + " = " +
-                                   VariableLiteral.GetNewLiteral(property.GetValue(this.MyObject, null)).GetLiteral();
+                                   VariableLiteral.GetNewLiteral(property.GetValue(MyObject, null));
 
                     propertyIndex++;
                 }
@@ -138,139 +119,79 @@ namespace RuntimeSpies
             declaration += "}";
             return declaration;
         }
-    }
 
-    internal class VariableLiteralArray : VariableLiteral
-    {
-        private Array MyArray { get; set; }
-
-        internal VariableLiteralArray(object myObject) : base(myObject)
+       
+        public static String GetArrayLiteral(object MyObject)
         {
-            this.MyArray = (Array) MyObject;
-        }
-
-        public override string GetLiteral()
-        {
-            var declaration = "new " + this.MyArray.GetType().GetElementType() + "[] {";
+            Array MyArray = (Array) MyObject;
+            var declaration = "new " + MyArray.GetType().GetElementType() + "[] {";
             var elementIndex = 0;
-            foreach (var element in this.MyArray)
+            foreach (var element in MyArray)
             {
 
                 if (elementIndex > 0)
                     declaration += ",";
-                declaration += VariableLiteral.GetNewLiteral(element).GetLiteral();
+                declaration += VariableLiteral.GetNewLiteral(element);
 
                 elementIndex++;
             }
             declaration += "}";
             return declaration;
         }
-    }
 
-
-    internal class VariableLiteralString : VariableLiteral
-    {
-        private string MyString { get; set; }
-
-        internal VariableLiteralString(object myObject) : base(myObject)
+       
+        public static string GetStringLiteral(object MyObject)
         {
-            this.MyString = (string)this.MyObject;
-        }
-
-        public override string GetLiteral()
-        {
-            var declaration = "\"" + this.MyString.Replace("\\","\\\\").Replace("\n", "\\n").Replace("\r", "\\r").
+            String MyString = (string)MyObject;
+            var declaration = "\"" + MyString.Replace("\\","\\\\").Replace("\n", "\\n").Replace("\r", "\\r").
                                   Replace("\"", "\\\"").Replace("\v", "\\v").Replace("\t", "\\t").
                                   Replace("\'", "\\\'") + "\"";
 
             return declaration;
         }
-    }
+  
 
-    internal class VariableLiteralChar : VariableLiteral
-    {
-
-
-        internal VariableLiteralChar(object myObject) : base(myObject)
-        {
-
-        }
-
-        public override string GetLiteral()
+        public static string GetCharLiteral(object MyObject)
         {
             string declaration;
-            if ((char)this.MyObject == '\n')
+            if ((char)MyObject == '\n')
                 declaration = "\'\\n\'";
             else
-                declaration = "\'" + this.MyObject + "\'";
+                declaration = "\'" + MyObject + "\'";
 
 
             return declaration;
         }
-    }
+   
 
-    internal class VariableLiteralFloat : VariableLiteral
-    {
-
-
-        internal VariableLiteralFloat(object myObject) : base(myObject)
+        public static string GetFloatLiteral(object MyObject)
         {
-
-        }
-
-        public override string GetLiteral()
-        {
-            var declaration = this.MyObject.ToString() + "F";
+            var declaration = MyObject.ToString() + "F";
 
             return declaration;
         }
-    }
+   
 
-    internal class VariableLiteralNull : VariableLiteral
-    {
-
-
-        internal VariableLiteralNull(object myObject) : base(myObject)
-        {
-
-        }
-
-        public override string GetLiteral()
+        public static string GetNullLiteral(object MyObject)
         {
 
             return "null";
         }
-    }
+   
 
-    internal class VariableLiteralSimple : VariableLiteral
-    {
-
-
-        internal VariableLiteralSimple(object myObject) : base(myObject)
+        public static string GetSimpleLiteral(object MyObject)
         {
-
-        }
-
-        public override string GetLiteral()
-        {
-            var declaration = this.MyObject.ToString();
+            var declaration = MyObject.ToString();
 
             return declaration;
         }
-    }
+    
 
-    internal class VariableLiteralBool : VariableLiteral
-    {
+  
 
-
-        internal VariableLiteralBool(object myObject) : base(myObject)
+        public static string GetBoolLiteral(object MyObject)
         {
-
-        }
-
-        public override string GetLiteral()
-        {
-            if ((bool)this.MyObject)
+            if ((bool)MyObject)
                 return "true";
             else
                 return "false";

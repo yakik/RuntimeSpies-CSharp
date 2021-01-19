@@ -8,27 +8,28 @@ namespace RuntimeSpiesTest
 {
     class TestClass
     {
-        public TestClass()
+        public TestClass(int A, String B, bool C, char D, long E, float F)
         {
+            FieldA = A;
+            FieldB = B;
+            FieldC = C;
+            FieldD = D;
+            FieldE = E;
+            FieldF = F;
         }
 
-        public int FieldA { get; set; }
-        public String FieldB { get; set; }
-        public bool FieldC { get; set; }
-        public char FieldD { get; set; }
-        public long FieldE { get; set; }
-        public float FieldF { get; set; }
+        int FieldA { get; set; }
+        private String FieldB { get; set; }
+        private bool FieldC { get; set; }
+        private char FieldD { get; set; }
+        private long FieldE { get; set; }
+        private float FieldF { get; set; }
 
     }
 
     class TestClassNoGetter
     {
-        public TestClassNoGetter()
-        {
-        }
-
-        
-
+       
         private int _FieldA;
         public int FieldA
         {
@@ -43,25 +44,13 @@ namespace RuntimeSpiesTest
     {
         enum Days { Sun, Mon, tue, Wed, thu, Fri, Sat };
         [Flags] enum myColors { Red = 1, Green = 2, Yellow = 4, Blue = 8 }
-        [TestMethod]
-        public void NoGetterTest()
-        {
-            var a = new TestClassNoGetter
-            {
-                FieldA = 5,
-                FieldB = "Hi!",
-            };
-            var myDeclaration = VariableLiteral.GetNewLiteral(a).GetLiteral();
-
-            Assert.AreEqual("new TestClassNoGetter {FieldB = \"Hi!\"}",
-                myDeclaration);
-        }
+  
 
         [TestMethod]
         public void NullTests()
         {
             TestClass a = null;
-            var myDeclaration = VariableLiteral.GetNewLiteral(a).GetLiteral();
+            var myDeclaration = VariableLiteral.GetNewLiteral(a);
 
             Assert.AreEqual("null",
                 myDeclaration);
@@ -70,16 +59,9 @@ namespace RuntimeSpiesTest
         [TestMethod]
         public void NullPropertyTests()
         {
-            var a = new TestClass
-            {
-                FieldA = 5,
-                FieldB = null,
-                FieldC = true,
-                FieldD = '\n',
-                FieldE = 123443435465,
-                FieldF = 123.453F
-            };
-            var myDeclaration = VariableLiteral.GetNewLiteral(a).GetLiteral();
+            var a = new TestClass(5, null, true, '\n', 123443435465, 123.453F);
+            
+            var myDeclaration = VariableLiteral.GetNewLiteral(a);
 
             Assert.AreEqual("new TestClass {FieldA = 5,FieldB = null,FieldC = true,FieldD = '\\n',FieldE = 123443435465,FieldF = 123.453F}",
                 myDeclaration);
@@ -90,16 +72,9 @@ namespace RuntimeSpiesTest
         [TestMethod]
         public void PrimitiveAndClassTests()
         {
-            var a = new TestClass
-            {
-                FieldA = 4,
-                FieldB = "Hello\r\nHello\tmy\'Tab\"\v",
-                FieldC = true,
-                FieldD = '\n',
-                FieldE = 123443435465,
-                FieldF = 123.453F
-            };
-            var myDeclaration = VariableLiteral.GetNewLiteral(a).GetLiteral();
+            var a = new TestClass(4, "Hello\r\nHello\tmy\'Tab\"\v", true, '\n', 123443435465, 123.453F);
+        
+            var myDeclaration = VariableLiteral.GetNewLiteral(a);
 
             Assert.AreEqual("new TestClass {FieldA = 4,FieldB = \"Hello\\r\\nHello\\tmy\\\'Tab\\\"\\v\",FieldC = true,FieldD = '\\n',FieldE = 123443435465,FieldF = 123.453F}",
                 myDeclaration);
@@ -111,7 +86,7 @@ namespace RuntimeSpiesTest
 
             int[] myArray = {1, 2, 3, 4, 5};
 
-            var myDeclaration = VariableLiteral.GetNewLiteral(myArray).GetLiteral();
+            var myDeclaration = VariableLiteral.GetNewLiteral(myArray);
 
             Assert.AreEqual("new System.Int32[] {1,2,3,4,5}",
                 myDeclaration);
@@ -126,7 +101,7 @@ namespace RuntimeSpiesTest
             Days myDay = Days.Sun;
            
 
-        var myDeclaration = VariableLiteral.GetNewLiteral(myDay).GetLiteral();
+        var myDeclaration = VariableLiteral.GetNewLiteral(myDay);
 
             Assert.AreEqual("Days.Sun",
                 myDeclaration);
@@ -140,7 +115,7 @@ namespace RuntimeSpiesTest
         {
             myColors testColors = myColors.Blue | myColors.Green;
 
-            var myDeclaration = VariableLiteral.GetNewLiteral(testColors).GetLiteral();
+            var myDeclaration = VariableLiteral.GetNewLiteral(testColors);
 
             Assert.AreEqual("myColors.Green | myColors.Blue",
                 myDeclaration);
@@ -149,32 +124,16 @@ namespace RuntimeSpiesTest
         [TestMethod]
         public void ListTests()
         {
-            var a = new TestClass
-            {
-                FieldA = 4,
-                FieldB = "Hello\nHello",
-                FieldC = true,
-                FieldD = '\n',
-                FieldE = 123443435465,
-                FieldF = 123.453F
-            };
-            var b = new TestClass
-            {
-                FieldA = 4,
-                FieldB = "Hello\nHello\nHello",
-                FieldC = false,
-                FieldD = '\n',
-                FieldE = 12653443435465,
-                FieldF = 123.47653F
-            };
-
+            var a = new TestClass(4,"Hello\nHello",true,'\n',123443435465, 123.453F);
+            var b = new TestClass(4, "Hello\nHello\nHello", false, '\n', 12653443435465, 123.47653F);
+           
             List<TestClass> myList = new List<TestClass>
             {
                 a,
                 b
             };
 
-            var myDeclaration = VariableLiteral.GetNewLiteral(myList).GetLiteral();
+            var myDeclaration = VariableLiteral.GetNewLiteral(myList);
 
             Assert.AreEqual("new List<RuntimeSpiesTest.TestClass>{new TestClass {FieldA = 4,FieldB = \"Hello\\nHello\",FieldC = true,FieldD = \'\\n\',FieldE = 123443435465,FieldF = 123.453F},new TestClass {FieldA = 4,FieldB = \"Hello\\nHello\\nHello\",FieldC = false,FieldD = \'\\n\',FieldE = 12653443435465,FieldF = 123.4765F}}",
                 myDeclaration);

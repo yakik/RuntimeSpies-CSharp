@@ -8,8 +8,9 @@
     <OutputType>Exe</OutputType>
     <RootNamespace>RuntimeSpies</RootNamespace>
     <AssemblyName>RuntimeSpies</AssemblyName>
-    <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
+    <TargetFrameworkVersion>v4.7.2</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
+    <TargetFrameworkProfile />
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <PlatformTarget>AnyCPU</PlatformTarget>
@@ -43,10 +44,6 @@
   <ItemGroup>
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="RuntimeSpy.cs" />
-    <Compile Include="RuntimeSpyFileManager.cs" />
-    <Compile Include="RuntimeSpySequence.cs" />
-    <Compile Include="RuntimeSpyUnitTestGenerator.cs" />
     <Compile Include="VariableLiteral.cs" />
   </ItemGroup>
   <ItemGroup>
